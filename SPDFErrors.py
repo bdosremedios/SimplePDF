@@ -20,3 +20,28 @@ class FilePathNotPDF(Exception):
 
     """
     pass
+
+
+class NoPrevVersions(Exception):
+    """
+    Thrown when there are no previous versions available.
+
+    """
+    pass
+
+
+class NoLaterVersions(Exception):
+    """
+    Thrown when there are no later versions available.
+
+    """
+    pass
+
+
+class NoValidFilePathGiven(Exception):
+    """
+    Thrown when no valid file path was given.
+
+    """
+    pass
+
