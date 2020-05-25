@@ -137,7 +137,10 @@ class createSavePathGUI(selectFileGUI):
 
 
 class editFileGUI(QDialog):
+    """
+    Main GUI used to edit PDF, capable of appending a PFD, removing/moving pages, undo/redo, and saving the edited PDF.
 
+    """
     def __init__(self, pdfFilePath):
         super().__init__()
 
@@ -156,6 +159,10 @@ class editFileGUI(QDialog):
         self.exec_()
 
     def _setUI(self):
+        """
+        Sets buttons and main canvas in main QDialog.
+
+        """
         self.setWindowTitle('SimplePDF')
         layout = QGridLayout()
 
@@ -244,6 +251,10 @@ class editFileGUI(QDialog):
         self._updateUI()
 
     def _updateUI(self):
+        """
+        Updates pageCount and displayed page count, current index, and main figure to current one of PDF.
+
+        """
         self.pageCount = self.pdf.countPages()
         self.indexDisplay.setText('{}/{}'.format(self.currentIndex+1, self.pageCount))
         self.mainAx.clear()
@@ -271,6 +282,10 @@ class editFileGUI(QDialog):
             self._updateUI()
 
     def _handleAppendPDF(self):
+        """
+        Adds given PDF to the end of current PDF, doing nothing if there isn't a PDF given.
+
+        """
         gui = selectFileGUI('Select PDF to Append')
         try:
             self.pdf.appendEntirePDF(self.loadPDF(gui.getSelectedPDFPath()))
@@ -291,15 +306,28 @@ class editFileGUI(QDialog):
             self._update()
 
     def _handleMovePage(self):
+        """
+        Initiates move page function version of GUI. Records index of page to move and changes to move mode.
+
+        """
         self.indexToMove = self.currentIndex
         self._activateMoveFunction(True)
         self._updateUI()
 
     def _cancelMovePage(self):
+        """
+        Changes to regular edit mode from move mode.
+
+        """
         self._activateMoveFunction(False)
         self._updateUI()
 
     def _movePage(self, movement):
+        """
+        Moves page to before or after the current indexed page depending on movement given. Changes index so that it remains
+        on current page despite change.
+
+        """
         if movement == 'Before':
             self.pdf.moveBeforePage(self.indexToMove, self.currentIndex)
             if self.indexToMove > self.currentIndex:
@@ -312,6 +340,11 @@ class editFileGUI(QDialog):
         self._update()
 
     def _activateMoveFunction(self, boolean):
+        """
+        Activates or deactivates move mode which entails setting certain move buttons enabled or disabled, and everything
+        else opposite to that state, so only moving or only not moving is option in GUI.
+
+        """
         self.moveMode = boolean
         self.appendPDFButton.setEnabled(not boolean)
         self.removePageButton.setEnabled(not boolean)
@@ -324,6 +357,11 @@ class editFileGUI(QDialog):
         self.cancelButton.setEnabled(boolean)
 
     def _handleVersionChange(self, change):
+        """
+        Moves to previous or later version of PDF depending on change value, and does nothing if there is no version to change
+        to. Updates index so that it does not go beyond the page maximum.
+
+        """
         if change == 'Undo':
             try:
                 self.pdf = self.recorder.previousVersion()
@@ -339,6 +377,10 @@ class editFileGUI(QDialog):
         self._updateUI()
 
     def _handleExportPDF(self):
+        """
+        Opens a GUI to create a save file name and creates a file there if given one. Does nothing if not.
+
+        """
         gui = createSavePathGUI()
         try:
             converter = PDF2FileConverter(self.pdf)
